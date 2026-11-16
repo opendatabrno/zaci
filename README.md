@@ -8,6 +8,7 @@ daní (kritérium „počet dětí a žáků navštěvujících školu zřizovan
 K tomu je tu částka, kterou obce za jedno dítě nebo žáka dostávají ze sdílených daní
 (rozpočtové roky 2013–2026), a odhad těchto prostředků pro každou obec.
 
+- **Web s daty ke stažení:** https://opendatabrno.github.io/zaci/
 - **Zdroj MF:** [Financování mateřských a základních škol](https://mf.gov.cz/cs/rozpoctova-politika/uzemni-rozpocty/hospodareni-uzemnich-rozpoctu/financovani-materskych-a-zakladnich-skol/2026)
   (stránky po letech, tabulka se stavem k 30. 9. roku R je na stránce roku R+1)
 - Sesterské sady: [obyvatelé obcí](https://github.com/opendatabrno/obyvatele) ·
@@ -27,8 +28,9 @@ K tomu je tu částka, kterou obce za jedno dítě nebo žáka dostávají ze sd
 | [`vystup/zaci_svazky_obci.csv`](vystup/zaci_svazky_obci.csv) | školy zřizované dobrovolnými svazky obcí (0–10 svazků ročně) | svazek × rok | `rok` + `nazev_svazku` |
 | [`vystup/castka_na_zaka.csv`](vystup/castka_na_zaka.csv) | kolik obce dostávají ze sdílených daní na jedno dítě nebo žáka, rozpočtové roky 2013–2026 | rok × příjemce | `rok` + `prijemce` |
 
-- Formát: CSV, UTF-8 (s BOM, aby se správně otevřelo v Excelu), oddělovač čárka.
-  Lokálně při zpracování vzniká i `vystup/zaci_obce.xlsx`.
+- Formát: CSV, UTF-8 (s BOM, aby se správně otevřelo v Excelu), oddělovač čárka. Na
+  [webu](https://opendatabrno.github.io/zaci/) jsou všechny sady ke stažení i jako Excel (`.xlsx`),
+  lokálně vzniká `vystup/zaci_obce.xlsx` při zpracování.
 - `kod_obce` je šestimístný kód obce ČSÚ, takže sadu jde spojit s
   [obyvateli obcí](https://github.com/opendatabrno/obyvatele) přes `kod_obce` (a rok – viz níže).
   Všechny obce z této sady v `obyvatele` jsou.
@@ -195,8 +197,13 @@ od ledna do června každé pondělí, zbytek roku 1. den v měsíci. Spustit se
 | Data se načetla, ale kontrola nesedí | PR s názvem začínajícím **„⚠️ Kontrola nesedí“** | zjisti příčinu v přehledu kontrol, PR neslučuj bez opravy |
 | MF změnilo strukturu tabulky | založí **issue** `zmena-struktury` s ukázkou souboru | upravit `zpracuj_data.py` (funkce `sloupec()` a `nacti_soubor()`) podle ukázky v issue |
 
-**Jednorázové nastavení na GitHubu:** *Settings → Actions → General → Workflow permissions:*
-**Read and write permissions** a zaškrtnout **Allow GitHub Actions to create and approve pull requests**.
+Po sloučení PR workflow [**GitHub Pages**](.github/workflows/pages.yml) automaticky
+aktualizuje web.
+
+**Jednorázové nastavení na GitHubu:**
+1. *Settings → Pages → Source:* **GitHub Actions**
+2. *Settings → Actions → General → Workflow permissions:* **Read and write permissions**
+   a zaškrtnout **Allow GitHub Actions to create and approve pull requests**
 
 > GitHub vypíná plánované workflows po 60 dnech bez aktivity v repozitáři (pošle e-mail).
 > Před lednem zkontroluj v záložce *Actions*, že workflow je zapnuté.
@@ -207,6 +214,7 @@ od ledna do června každé pondělí, zbytek roku 1. den v měsíci. Spustit se
 pip install -r requirements.txt   # jen poprvé
 python stahni_data.py             # stáhne chybějící tabulky MF do data/
 python zpracuj_data.py            # zpracuje vše do vystup/ a vytvoří přehled kontrol
+python web.py                     # volitelně: web do _site/
 ```
 
 Nové tabulky hledá `stahni_data.py` na stránkách MF sám (článek „Počty dětí a žáků …“
@@ -214,7 +222,8 @@ s přílohou xlsx, článek „Informace o výši prostředků …“ s částko
 
 ## Kontroly
 
-Po zpracování vznikne **`vystup/kontrola.html`** a kontrolní CSV:
+Po zpracování vznikne **`vystup/kontrola.html`** (online na [webu](https://opendatabrno.github.io/zaci/kontrola.html))
+a kontrolní CSV. Semafory: zelená = v pořádku, modrá = známý rozdíl, oranžová = ověřit ručně, červená = nesedí.
 
 | Kontrola | Co hlídá | Podklad |
 |---|---|---|
@@ -237,9 +246,11 @@ na svazky (Ondřejov, Tursko) a podobně.
 | `stahni_data.py` | stažení tabulek MF (známé odkazy + hledání nových), článků s částkou na žáka a číselníků obcí |
 | `zpracuj_data.py` | zpracování do tabulky obcí a svazků, spouští i kontroly |
 | `castky.py` | částka na žáka z článků MF „Informace o výši prostředků …“ |
+| `web.py` | sestavení webu pro GitHub Pages do `_site/` (úvodní stránka, grafy, CSV a xlsx ke stažení) |
 | `kontrola.py` | přehled kontrol `vystup/kontrola.html` a souhrn pro PR |
 | `ciselniky/pscoco.csv`, `ciselniky/cnumnuts.csv` | číselník obcí, okresů a krajů (volby.gov.cz) |
 | `.github/workflows/aktualizace.yml` | automatická aktualizace |
+| `.github/workflows/pages.yml` | publikace webu na GitHub Pages |
 
 ## Jak se data zpracovávají
 
