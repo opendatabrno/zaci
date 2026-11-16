@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+~$*
+
+# zdrojové tabulky MF stahuje stahni_data.py
+/data/
+# xlsx kopie výstupů, v repu jsou jen CSV
+/vystup/*.xlsx
+# přehled kontrol generuje kontrola.py
+/vystup/kontrola.html
+/vystup/kontrola_souhrn.md
+/vystup/kontrola_stav.txt
+/vystup/chyba_struktury.txt
